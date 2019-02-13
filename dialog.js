@@ -7,7 +7,8 @@
 					Firefox
 					...
 	
-	- jQuery 1.9
+	- jQuery 1.9.1
+	- jQuery-ui
 	- jquery-dialogextend (https://github.com/ROMB/jquery-dialogextend)
 	
 	
@@ -24,6 +25,79 @@
 		
 		+ limiter le nombre de commentaire HTML (<!-- ..... -->) avant la balise <meta http-equiv="X-UA-Compatible" ...> pour IE10 & IE11 !!!  (une ou deux passe... cinq ou six et IE ne prend plus en compte la balise <meta> de compatibilité !!!)
 ============================================================================================================= */
+
+		//-------------------------------  Prevent scrolling of parent element (http://http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element)
+		$.fn.mousewheelStopPropagation = function(options) {
+			options = $.extend({
+				// defaults
+				wheelstop: null // Function
+				}, options);
+
+			// Compatibilities
+			var isMsIE = ('Microsoft Internet Explorer' === navigator.appName);
+			var docElt = document.documentElement,
+				mousewheelEventName = 'mousewheel';
+			if('onmousewheel' in docElt) {
+				mousewheelEventName = 'mousewheel';
+			} else if('onwheel' in docElt) {
+				mousewheelEventName = 'wheel';
+			} else if('DOMMouseScroll' in docElt) {
+				mousewheelEventName = 'DOMMouseScroll';
+			}
+			if(!mousewheelEventName) { return this; }
+
+			function mousewheelPrevent(event) {
+				event.preventDefault();
+				event.stopPropagation();
+				if('function' === typeof options.wheelstop) {
+					options.wheelstop(event);
+				}
+			}
+
+			return this.each(function() {
+				var _this = this,
+					$this = $(_this);
+				$this.on(mousewheelEventName, function(event) {
+					var origiEvent = event.originalEvent;
+					var scrollTop = _this.scrollTop,
+						scrollMax = _this.scrollHeight - $this.outerHeight(),
+						delta = -origiEvent.wheelDelta;
+					if(isNaN(delta)) {
+						delta = origiEvent.deltaY;
+					}
+					var scrollUp = delta < 0;
+					if((scrollUp && scrollTop <= 0) || (!scrollUp && scrollTop >= scrollMax)) {
+						mousewheelPrevent(event);
+					} else if(isMsIE) {
+						// Fix Internet Explorer and emulate natural scrolling
+						var animOpt = { duration:200, easing:'linear' };
+						if(scrollUp && -delta > scrollTop) {
+							$this.stop(true).animate({ scrollTop:0 }, animOpt);
+							mousewheelPrevent(event);
+						} else if(!scrollUp && delta > scrollMax - scrollTop) {
+							$this.stop(true).animate({ scrollTop:scrollMax }, animOpt);
+							mousewheelPrevent(event);
+						}
+					}
+				});
+			});
+		};
+		
+		// pas suffisant sur certain navigateur => solution 2 : passer TOUTES les dialog en mode 'Fixed' !
+		$.ui.dialog.prototype._oldinit = $.ui.dialog.prototype._init;
+		$.ui.dialog.prototype._init = function() {
+			$(this.element).parent().css('position', 'fixed');
+			$(this.element).dialog("option",{
+				resizeStop: function(event,ui) {
+					var position = [(Math.floor(ui.position.left) - $(window).scrollLeft()),
+									(Math.floor(ui.position.top) - $(window).scrollTop())];
+					$(event.target).parent().css('position', 'fixed');
+					$(event.target).dialog('option','position',position);
+					return true;
+				}
+			});
+			this._oldinit();
+		};
 
 		//------------------------------- Chargement d'un fichier via une Dialog jQuery "interractive" (iFrame)
 		function dialog(param,w,h,titre) {
