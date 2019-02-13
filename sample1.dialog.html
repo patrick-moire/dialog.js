@@ -1,0 +1,71 @@
+<!DOCTYPE html5 PUBLIC "">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" 	content="text/html; charset=iso-8859-1">
+		<meta http-equiv="X-UA-Compatible" 	content="IE=edge,chrome=1">
+
+		<!-- jquery 1.9.1 ------------------------------------------ -->
+		<script src="/jslib/jquery-1.9.1.min.js"></script>
+		<script src="/jslib/jquery-ui/jquery-ui.min.js"></script>
+		<link rel="stylesheet" type="text/css" media="all" href="/jslib/jquery-ui/jquery-ui.css">
+
+		<script language="JavaScript">
+
+			// Initialisation
+			var $dialog = parent.$('.ui-dialog:last');
+			var	$buttonpane = $('.ui-dialog-buttonpane',$dialog);
+			var $iframe = $('iframe',$dialog);
+			var event_encours = false;
+
+			//------------------------------- Escape ?
+			$(document).on("keydown", function (e) {
+				if (e.which === 27) {
+					$('button.ui-dialog-titlebar-close',$dialog).click();
+					e.preventDefault();
+					e.stopPropagation();
+				}
+
+			//------------------------------- Fin de chargement de la page...
+			}).ready(function() {
+
+				// Modification des boutons
+				parent.$(".ui-button[name='close']",$buttonpane).children('.ui-button-text').html("Abandon");
+				parent.$(".ui-button[name='save']" ,$buttonpane).show()
+				parent.$(".ui-button[name='send']" ,$buttonpane).show()
+			});
+			
+			//----------------------------- facultatif, Click sur bouton "save"...
+			function Sauvegarder()  {
+				document.dialog.submit();
+			}
+			
+			//----------------------------- facultatif, Click sur bouton "send"...
+			function Envoyer()  {
+				document.dialog.nom.value = '';
+				document.dialog.prenom.value = '';
+				parent.$(".ui-button[name='close']",$buttonpane).click();
+			}
+			
+			//----------------------------- facultatif, Before close
+			function dialog_beforeClose() {
+				if (document.dialog.nom.value!='' || document.dialog.prenom.value!='') {
+					return confirm("Quit ?");
+				} else {
+					return true;
+				}
+			}
+			
+		</script>
+		
+	</head>
+	<body>
+	
+		<form name="dialog" action="sample1.dialog.html" method="post">
+			nom : <input type="text" name="nom">
+			<br><br>
+			prenom : <input type="text" name="prenom">
+		</form>
+	
+	</body>
+</html>
+	
