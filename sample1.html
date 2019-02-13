@@ -1,0 +1,65 @@
+<!DOCTYPE html5 PUBLIC "">
+<html>
+	<head>
+
+		<!-- for IE ------------------------------------------------ -->
+		<meta http-equiv="Content-Type" 	content="text/html; charset=iso-8859-1">
+		<meta http-equiv="X-UA-Compatible" 	content="IE=edge,chrome=1">
+		<link rel="stylesheet" src="/normalize.css">
+		
+		<!-- jquery 1.9.1 ------------------------------------------ -->
+		<script src="/jslib/jquery-1.9.1.min.js"></script>
+		<script src="/jslib/jquery-ui/jquery-ui.min.js"></script>
+		<link rel="stylesheet" type="text/css" media="all" href="/jslib/jquery-ui/jquery-ui.css">
+		
+		<!-- jquery.dialogextend.js -------------------------------- -->
+		<script src="jquery.dialogextend.js" ></script>
+		<style media="all">
+			.ui-dialog .ui-dialog-titlebar 		{ padding: initial !important;  }
+			.ui-dialog .ui-dialog-title    		{ margin: .1em .5em; }
+			.ui-button .ui-button-text     		{ font-size: 12px;   }
+			.ui-icon.ui-icon-extend 	   		{  background-image: url(/images/ui-icons_extend.png) !important; }
+			.ui-icon-extend.ui-icon-calculator 	{ background-position: -295px -180px; !important; }
+			.ui-icon-extend.ui-icon-phone 		{ background-position: -8px   -64px   !important; }
+			.ui-icon-extend.ui-icon-map 		{ background-position: -152px -151px  !important; }
+			.ui-icon-extend.ui-icon-user 		{ background-position: -65px  -93px   !important; }
+			.ui-icon-extend.ui-icon-disk 		{ background-position: -8px  -266px   !important; }
+			.ui-icon-extend.ui-icon-monitor		{ background-position: -36px -266px   !important; }
+			.ui-icon-extend.ui-icon-config		{ background-position: -95px -210px   !important; }
+		</style>	
+		
+		<!-- dialog.js -------------------------------- -->
+		<script src="dialog.js" ></script>
+
+		<script language="JavaScript">
+		
+			$(document).ready(function() {
+				document.dialog.titre.value = "test";
+				$('#GO').click( function(e) {
+					dialog({ formulaire: document.dialog,
+						  width: 600,
+					     height: 500,
+						  titre: "Exemple de Dialog"
+					});
+					e.preventDefault();
+					e.stopPropagation();
+				});
+			});
+		</script>
+		
+	</head>
+	<body>
+	
+		<form name="sample1" action="./sample1.html" method="post">
+			<button id="GO">
+				DIALOG-BOX
+			</button>		
+		</form>
+	
+		<form name="dialog" action="./sample1.dialog.html" method="post" target="dialog1">
+			<input type="hidden" name="titre">
+		</form>
+	
+	</body>
+</html>
+	
